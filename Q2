@@ -1,0 +1,51 @@
+#include <iostream>
+#include <vector>
+using namespace std;
+
+// Function to print the array
+void printArray(const vector<int>& arr) {
+    for (int num : arr)
+        cout << num << " ";
+    cout << endl;
+}
+
+// Improved Selection Sort: Find both min and max in each pass
+void improvedSelectionSort(vector<int>& arr) {
+    int n = arr.size();
+    for (int i = 0; i < n / 2; i++) {
+        int minIndex = i;
+        int maxIndex = n - i - 1;
+
+        // Find min and max in the unsorted part
+        for (int j = i; j <= n - i - 1; j++) {
+            if (arr[j] < arr[minIndex])
+                minIndex = j;
+            if (arr[j] > arr[maxIndex])
+                maxIndex = j;
+        }
+
+        // Place the minimum element at the beginning
+        swap(arr[i], arr[minIndex]);
+
+        // If we swapped the element that was the max, adjust its index
+        if (maxIndex == i)
+            maxIndex = minIndex;
+
+        // Place the maximum element at the end
+        swap(arr[n - i - 1], arr[maxIndex]);
+    }
+}
+
+int main() {
+    vector<int> arr = {64, 25, 12, 22, 11, 90, 45};
+
+    cout << "Original Array: ";
+    printArray(arr);
+
+    improvedSelectionSort(arr);
+
+    cout << "Sorted Array (Improved Selection Sort): ";
+    printArray(arr);
+
+    return 0;
+}
