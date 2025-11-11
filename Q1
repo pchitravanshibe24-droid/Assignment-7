@@ -1,0 +1,165 @@
+#include <iostream>
+#include <vector>
+using namespace std;
+
+
+void printArray(const vector<int>& arr) {
+    for (int num : arr)
+        cout << num << " ";
+    cout << endl;
+}
+
+// a. Selection Sort
+void selectionSort(vector<int>& arr) {
+    int n = arr.size();
+    for (int i = 0; i < n - 1; i++) {
+        int minIndex = i;
+        for (int j = i + 1; j < n; j++) {
+            if (arr[j] < arr[minIndex])
+                minIndex = j;
+        }
+        swap(arr[i], arr[minIndex]);
+    }
+}
+
+// b. Insertion Sort
+void insertionSort(vector<int>& arr) {
+    int n = arr.size();
+    for (int i = 1; i < n; i++) {
+        int key = arr[i];
+        int j = i - 1;
+        while (j >= 0 && arr[j] > key) {
+            arr[j + 1] = arr[j];
+            j--;
+        }
+        arr[j + 1] = key;
+    }
+}
+
+// c. Bubble Sort
+void bubbleSort(vector<int>& arr) {
+    int n = arr.size();
+    for (int i = 0; i < n - 1; i++) {
+        bool swapped = false;
+        for (int j = 0; j < n - i - 1; j++) {
+            if (arr[j] > arr[j + 1]) {
+                swap(arr[j], arr[j + 1]);
+                swapped = true;
+            }
+        }
+        if (!swapped) break; // Optimization
+    }
+}
+
+// d. Merge Sort helper functions
+void merge(vector<int>& arr, int left, int mid, int right) {
+    vector<int> temp;
+    int i = left, j = mid + 1;
+    while (i <= mid && j <= right) {
+        if (arr[i] <= arr[j])
+            temp.push_back(arr[i++]);
+        else
+            temp.push_back(arr[j++]);
+    }
+    while (i <= mid) temp.push_back(arr[i++]);
+    while (j <= right) temp.push_back(arr[j++]);
+    for (int k = left; k <= right; k++)
+        arr[k] = temp[k - left];
+}
+
+void mergeSort(vector<int>& arr, int left, int right) {
+    if (left < right) {
+        int mid = (left + right) / 2;
+        mergeSort(arr, left, mid);
+        mergeSort(arr, mid + 1, right);
+        merge(arr, left, mid, right);
+    }
+}
+
+// e. Quick Sort helper functions
+int partition(vector<int>& arr, int low, int high) {
+    int pivot = arr[high];
+    int i = low - 1;
+    for (int j = low; j < high; j++) {
+        if (arr[j] < pivot) {
+            i++;
+            swap(arr[i], arr[j]);
+        }
+    }
+    swap(arr[i + 1], arr[high]);
+    return i + 1;
+}
+
+void quickSort(vector<int>& arr, int low, int high) {
+    if (low < high) {
+        int pi = partition(arr, low, high);
+        quickSort(arr, low, pi - 1);
+        quickSort(arr, pi + 1, high);
+    }
+}
+
+// 2. Improved Selection Sort (min & max per pass)
+void improvedSelectionSort(vector<int>& arr) {
+    int n = arr.size();
+    for (int i = 0; i < n / 2; i++) {
+        int minIndex = i;
+        int maxIndex = n - i - 1;
+
+        for (int j = i; j <= n - i - 1; j++) {
+            if (arr[j] < arr[minIndex]) minIndex = j;
+            if (arr[j] > arr[maxIndex]) maxIndex = j;
+        }
+
+        // Swap minimum to the front
+        swap(arr[i], arr[minIndex]);
+
+        // If we swapped the element that was supposed to be max, update its index
+        if (maxIndex == i)
+            maxIndex = minIndex;
+
+        // Swap maximum to the end
+        swap(arr[n - i - 1], arr[maxIndex]);
+    }
+}
+
+// Main function
+int main() {
+    vector<int> arr = {64, 25, 12, 22, 11};
+    
+    cout << "Original Array: ";
+    printArray(arr);
+
+    vector<int> temp;
+
+    temp = arr;
+    selectionSort(temp);
+    cout << "Selection Sort: ";
+    printArray(temp);
+
+    temp = arr;
+    insertionSort(temp);
+    cout << "Insertion Sort: ";
+    printArray(temp);
+
+    temp = arr;
+    bubbleSort(temp);
+    cout << "Bubble Sort: ";
+    printArray(temp);
+
+    temp = arr;
+    mergeSort(temp, 0, temp.size() - 1);
+    cout << "Merge Sort: ";
+    printArray(temp);
+
+    temp = arr;
+    quickSort(temp, 0, temp.size() - 1);
+    cout << "Quick Sort: ";
+    printArray(temp);
+
+    temp = arr;
+    improvedSelectionSort(temp);
+    cout << "Improved Selection Sort: ";
+    printArray(temp);
+
+    return 0;
+}
